@@ -1,0 +1,13 @@
+
+/styled-by-kelly
+├── app/                    # Next.js App Router routes (marketing + dashboard + auth)
+├── components/             # Shared React components and shadcn/ui primitives
+├── docs/                   # Documentation (e.g., accessibility notes)
+├── lib/                    # Utility helpers
+├── public/                 # Static assets served by Next.js
+├── env.example             # Template for required environment variables
+├── package.json            # Project metadata and scripts
+├── tsconfig.json           # TypeScript configuration
+├── README.md               # Project setup and workflow instructions
+├── PRD (1).md              # Product requirements document
+└── SPRINT_PLAN.md          # Sprint roadmap and status
