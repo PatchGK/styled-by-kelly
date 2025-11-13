@@ -151,8 +151,8 @@ export function DashboardSidebar({ className }: { className?: string }) {
       <div className="border-b border-border px-6 py-6">
         <Link href="/" className="flex items-center gap-2">
           <span className="font-serif text-xl font-semibold text-primary">StyledByKelly</span>
-        </Link>
-      </div>
+          </Link>
+        </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <nav className="space-y-8">
@@ -172,10 +172,10 @@ export function DashboardSidebar({ className }: { className?: string }) {
       <div className="border-t border-border px-4 py-6">
         <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground" onClick={handleSignOut}>
           <LogOut className="h-5 w-5" />
-          Sign Out
-        </Button>
-      </div>
-    </aside>
+            Sign Out
+          </Button>
+        </div>
+      </aside>
   )
 }
 
@@ -222,20 +222,20 @@ export function DashboardMobileNav({
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{section.heading}</p>
                 <div className="space-y-1.5">
                   {section.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
+                <Link
+                  key={item.href}
+                  href={item.href}
                       onClick={() => onOpenChange(false)}
-                      className={cn(
+                  className={cn(
                         "flex items-start gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors",
                         isActive(pathname, item.href)
                           ? "bg-primary text-primary-foreground shadow-sm"
-                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                      )}
-                    >
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  )}
+                >
                       <item.icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                       <span className="flex-1">
-                        {item.label}
+                  {item.label}
                         {item.description ? (
                           <span className="mt-1 block text-xs font-normal text-muted-foreground/80">
                             {item.description}
@@ -247,7 +247,7 @@ export function DashboardMobileNav({
                           {item.badge}
                         </span>
                       ) : null}
-                    </Link>
+                </Link>
                   ))}
                 </div>
               </div>

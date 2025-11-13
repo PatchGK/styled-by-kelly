@@ -195,23 +195,23 @@ export default function SignupPage() {
 
         <div className="rounded-lg border border-border bg-muted/40 p-4">
           <div className="flex items-start gap-3">
-            <Switch
-              id="acceptTerms"
-              checked={watch("acceptTerms")}
-              onCheckedChange={(checked) => setValue("acceptTerms", checked)}
+          <Switch
+            id="acceptTerms"
+            checked={watch("acceptTerms")}
+            onCheckedChange={(checked) => setValue("acceptTerms", checked)}
               className="mt-1"
-            />
-            <Label htmlFor="acceptTerms" className="text-sm font-normal text-muted-foreground leading-relaxed">
-              I agree to the{" "}
-              <Link href="/terms" className="text-primary underline underline-offset-2">
-                membership terms
-              </Link>{" "}
-              and acknowledge the{" "}
-              <Link href="/privacy" className="text-primary underline underline-offset-2">
-                privacy policy
-              </Link>
-              .
-            </Label>
+          />
+          <Label htmlFor="acceptTerms" className="text-sm font-normal text-muted-foreground leading-relaxed">
+            I agree to the{" "}
+            <Link href="/terms" className="text-primary underline underline-offset-2">
+              membership terms
+            </Link>{" "}
+            and acknowledge the{" "}
+            <Link href="/privacy" className="text-primary underline underline-offset-2">
+              privacy policy
+            </Link>
+            .
+          </Label>
           </div>
         </div>
         {errors.acceptTerms && <p className="text-sm text-destructive">{errors.acceptTerms.message}</p>}
