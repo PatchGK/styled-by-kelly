@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Enter the email address for your account"),
@@ -17,6 +18,7 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordPage() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const {
     register,
@@ -32,15 +34,22 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (values: ForgotPasswordFormValues) => {
     setStatus("idle")
+    setErrorMessage(null)
 
-    await new Promise((resolve) => setTimeout(resolve, 700))
+    const supabase = createSupabaseBrowserClient()
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
+    const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+      redirectTo: origin ? `${origin}/reset-password` : undefined,
+    })
 
-    if (values.email) {
-      setStatus("success")
-      reset({ email: "" })
-    } else {
+    if (error) {
+      setErrorMessage(error.message)
       setStatus("error")
+      return
     }
+
+    setStatus("success")
+    reset({ email: "" })
   }
 
   return (
@@ -77,7 +86,7 @@ export default function ForgotPasswordPage() {
         )}
         {status === "error" && (
           <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            We couldn’t send the email. Please verify the address and try again.
+            {errorMessage ?? "We couldn’t send the email. Please verify the address and try again."}
           </div>
         )}
       </form>

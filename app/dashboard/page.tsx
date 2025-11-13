@@ -1,16 +1,70 @@
+"use client"
+
+import { useState } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Sparkles, Heart, ShoppingBag, Calendar, ArrowRight } from "lucide-react"
+import { Sparkles, Heart, ShoppingBag, Calendar, ArrowRight, BellDot, Palette } from "lucide-react"
 import Link from "next/link"
+import { useSupabase } from "@/components/providers/supabase-provider"
+import { useProfile } from "@/hooks/use-profile"
 
 export default function DashboardPage() {
+  const { session } = useSupabase()
+  const { profile, loading } = useProfile()
+  const [portalLoading, setPortalLoading] = useState(false)
+  const derivedName = `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`.trim()
+  const displayName =
+    profile?.full_name ??
+    (derivedName !== "" ? derivedName : session?.user.email?.split("@")[0]) ??
+    "there"
+  const membershipPlan = profile?.membership_plan ?? "Plus"
+  const nextBilling = profile?.next_billing_date ?? "December 15, 2025"
+  const memberSince = profile?.member_since_months ?? "3"
+  const subscriptionStatus = profile?.subscription_status ?? "inactive"
+  const designBoards = [
+    { title: "Modern Farmhouse Living", updated: "2 days ago", mood: "Warm neutrals", image: "/.jpg?height=320&width=480&query=modern%20living%20room" },
+    { title: "Dream Office Nook", updated: "5 days ago", mood: "Soft minimal", image: "/.jpg?height=320&width=480&query=minimal%20office" },
+    { title: "Coastal Kitchen Refresh", updated: "1 week ago", mood: "Sky & sand palette", image: "/.jpg?height=320&width=480&query=coastal%20kitchen" },
+  ]
+  const savedItems = [
+    { name: "Oak Tambour Credenza", price: "$1,250", image: "/.jpg?height=240&width=240&query=oak%20credenza" },
+    { name: "Textured Bouclé Accent Chair", price: "$540", image: "/.jpg?height=240&width=240&query=boucle%20accent%20chair" },
+    { name: "Linear Brass Pendant", price: "$320", image: "/.jpg?height=240&width=240&query=brass%20pendant%20light" },
+    { name: "Handwoven Wool Rug", price: "$860", image: "/.jpg?height=240&width=240&query=neutral%20wool%20rug" },
+  ]
+  const notifications = [
+    { title: "Designer update", body: "Kelly added a new layout revision to Living Room Refresh.", time: "1 hour ago" },
+    { title: "AI tools", body: "Your Color Matcher palette is ready to review.", time: "Yesterday" },
+    { title: "Marketplace", body: "Booking request received for Single Room Design.", time: "2 days ago" },
+  ]
+
+  const handleBillingPortal = async () => {
+    setPortalLoading(true)
+    const response = await fetch("/api/stripe/create-portal-session", { method: "POST" })
+    setPortalLoading(false)
+    if (!response.ok) {
+      const { error } = (await response.json()) as { error?: string }
+      toast.error(error ?? "Unable to open billing portal.")
+      return
+    }
+    const data = (await response.json()) as { url?: string }
+    if (data.url) {
+      window.location.href = data.url
+    } else {
+      toast.error("Billing portal URL not available.")
+    }
+  }
+
   return (
     <div className="p-6 md:p-8 space-y-8">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Welcome back, Sarah</h1>
-        <p className="text-muted-foreground">Here's what's happening with your design journey</p>
+        <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Welcome back, {displayName}</h1>
+        <p className="text-muted-foreground">
+          {loading ? "Fetching your latest updates..." : "Here's what's happening with your design journey"}
+        </p>
       </div>
 
       {/* Current Plan */}
@@ -20,15 +74,18 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">Current Plan</span>
               <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                Plus
+                {membershipPlan}
               </span>
             </div>
-            <h2 className="font-serif text-2xl font-bold text-foreground">Plus Subscription</h2>
-            <p className="text-sm text-muted-foreground">Next billing date: December 15, 2025</p>
+            <h2 className="font-serif text-2xl font-bold text-foreground">{membershipPlan} Subscription</h2>
+            <p className="text-sm text-muted-foreground">Next billing date: {nextBilling}</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              Status: <span className="text-foreground">{subscriptionStatus}</span>
+            </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" asChild>
-              <Link href="/dashboard/settings">Manage Plan</Link>
+            <Button variant="outline" onClick={handleBillingPortal} disabled={portalLoading}>
+              {portalLoading ? "Opening..." : "Manage Plan"}
             </Button>
             <Button asChild>
               <Link href="/pricing">Upgrade</Link>
@@ -79,12 +136,40 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-1">
             <p className="text-3xl font-bold text-foreground">3</p>
-            <p className="text-xs text-muted-foreground">months</p>
+            <p className="text-xs text-muted-foreground">{memberSince} months</p>
           </div>
         </Card>
       </div>
 
       {/* Quick Actions */}
+      {/* Design Boards */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-serif text-2xl font-bold text-foreground">Design Boards</h2>
+          <Button variant="ghost" asChild>
+            <Link href="/dashboard/projects">
+              Manage Boards <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {designBoards.map((board) => (
+            <Card key={board.title} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="aspect-[4/3] bg-muted">
+                <img src={board.image} alt={board.title} className="object-cover w-full h-full" />
+              </div>
+              <div className="p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-primary">
+                  <Palette className="h-4 w-4" />
+                  {board.mood}
+                </div>
+                <h3 className="font-semibold text-foreground">{board.title}</h3>
+                <p className="text-xs text-muted-foreground">Updated {board.updated}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
       <div>
         <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Quick Actions</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -194,6 +279,48 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
+      </div>
+
+      {/* Saved Items */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-serif text-2xl font-bold text-foreground">Saved Items</h2>
+          <Button variant="ghost" asChild>
+            <Link href="/dashboard/projects">
+              View Moodboards <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {savedItems.map((item) => (
+            <Card key={item.name} className="overflow-hidden border-border bg-background/80">
+              <div className="aspect-square bg-muted">
+                <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
+              </div>
+              <div className="p-4 space-y-2">
+                <h3 className="font-medium text-foreground text-sm">{item.name}</h3>
+                <p className="text-xs text-muted-foreground">{item.price}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Inbox & Notifications */}
+      <div>
+        <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Inbox & Notifications</h2>
+        <Card className="p-6 space-y-4">
+          {notifications.map((note, index) => (
+            <div key={index} className="flex items-start gap-3 text-sm text-muted-foreground">
+              <BellDot className="h-4 w-4 text-primary mt-1" />
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">{note.title}</p>
+                <p>{note.body}</p>
+                <p className="text-xs text-muted-foreground/80">{note.time}</p>
+              </div>
+            </div>
+          ))}
+        </Card>
       </div>
     </div>
   )

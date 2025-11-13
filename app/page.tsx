@@ -40,7 +40,7 @@ export default function HomePage() {
         <div className="container">
           <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden">
             <img
-              src="/placeholder.svg?key=hero-living-room"
+              src="/boho-living-room.jpg"
               alt="Modern living room styled with earthy tones"
               className="object-cover w-full h-full"
             />
@@ -92,6 +92,45 @@ export default function HomePage() {
                 Need help with staging, event setup, or hands-on design? Book local services right from your dashboard.
               </p>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Collaboration Spotlight */}
+      <section className="py-20 md:py-32">
+        <div className="container grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+              Real designers, real partnership
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground text-balance">
+              Collaborative design that keeps you inspired
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              StyledByKelly blends AI insights with a welcoming team of designers who co-create every plan. From weekly
+              feedback sessions to curated product picks, you always have a human touch to guide your next move.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-6 text-left">
+              <div className="rounded-lg border border-border p-6 bg-background/60">
+                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Human + AI workflows</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Designers build on AI-generated boards to translate your style quiz into layered, livable concepts.
+                </p>
+              </div>
+              <div className="rounded-lg border border-border p-6 bg-background/60">
+                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Warm, ongoing dialogue</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Stay in touch with your stylist for refreshes, seasonal tweaks, and local service recommendations.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-border">
+            <img
+              src="/collaboration-vertical.jpg"
+              alt="StyledByKelly designers collaborating on a client project"
+              className="object-cover w-full h-full"
+            />
           </div>
         </div>
       </section>

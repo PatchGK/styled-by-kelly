@@ -19,11 +19,6 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Services
-                </Link>
-              </li>
-              <li>
                 <Link href="/inspiration" className="text-muted-foreground hover:text-foreground transition-colors">
                   Inspiration
                 </Link>

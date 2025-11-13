@@ -1,9 +1,27 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import Link from "next/link"
+import { CheckoutButton } from "@/components/pricing/checkout-button"
+
+const tierPriceIds = {
+  Starter: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER ?? null,
+  Plus: process.env.NEXT_PUBLIC_STRIPE_PRICE_PLUS ?? null,
+  Pro: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ?? null,
+  Elite: process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE ?? null,
+}
+
+const servicePriceIds = {
+  "Single Room Design": process.env.NEXT_PUBLIC_STRIPE_PRICE_SINGLE_ROOM_DESIGN ?? null,
+  "Home Staging": process.env.NEXT_PUBLIC_STRIPE_PRICE_HOME_STAGING ?? null,
+  "Event Setup": process.env.NEXT_PUBLIC_STRIPE_PRICE_EVENT_SETUP ?? null,
+  "Color Consultation": process.env.NEXT_PUBLIC_STRIPE_PRICE_COLOR_CONSULTATION ?? null,
+  "In-Home Consultation": process.env.NEXT_PUBLIC_STRIPE_PRICE_IN_HOME_CONSULTATION ?? null,
+  "Installation Oversight": process.env.NEXT_PUBLIC_STRIPE_PRICE_INSTALLATION_OVERSIGHT ?? null,
+  "White-Glove Sourcing": process.env.NEXT_PUBLIC_STRIPE_PRICE_WHITE_GLOVE_SOURCING ?? null,
+}
 
 const tiers = [
   {
@@ -20,6 +38,7 @@ const tiers = [
     ],
     cta: "Start Free Trial",
     popular: false,
+    priceId: tierPriceIds.Starter,
   },
   {
     name: "Plus",
@@ -36,6 +55,7 @@ const tiers = [
     ],
     cta: "Start Free Trial",
     popular: true,
+    priceId: tierPriceIds.Plus,
   },
   {
     name: "Pro",
@@ -53,6 +73,7 @@ const tiers = [
     ],
     cta: "Start Free Trial",
     popular: false,
+    priceId: tierPriceIds.Pro,
   },
   {
     name: "Elite",
@@ -71,33 +92,59 @@ const tiers = [
     ],
     cta: "Contact Sales",
     popular: false,
+    priceId: tierPriceIds.Elite,
   },
 ]
 
-const addOns = [
+const services = [
   {
     name: "Single Room Design",
-    price: "$200 - $500",
-    description: "Complete design plan for one room with shopping list",
+    price: "$650",
+    description: "Full room design with custom layout, concept board, and curated shopping list.",
+    priceId: servicePriceIds["Single Room Design"],
   },
   {
     name: "Home Staging",
-    price: "$1,000 - $3,500+",
-    description: "Professional staging for real estate listings",
+    price: "$6,000",
+    description: "Whole-home staging for listings (up to ~2,000 sq ft) styled to sell quickly.",
+    priceId: servicePriceIds["Home Staging"],
   },
   {
     name: "Event Setup",
-    price: "$500 - $2,000",
-    description: "Styling and decor for parties and special events",
+    price: "$2,400",
+    description: "Décor, layout, and on-site styling to host gatherings without the stress.",
+    priceId: servicePriceIds["Event Setup"],
   },
   {
     name: "Color Consultation",
-    price: "$50 - $150",
-    description: "Expert color palette for your entire home",
+    price: "$250",
+    description: "Virtual or in-person palette planning with follow-up swatches and notes.",
+    priceId: servicePriceIds["Color Consultation"],
+  },
+  {
+    name: "In-Home Consultation",
+    price: "$200 / hour",
+    description: "Hands-on walkthrough credited toward your project when you move forward.",
+    priceId: servicePriceIds["In-Home Consultation"],
+  },
+  {
+    name: "Installation Oversight",
+    price: "$1,500",
+    description: "Project management during deliveries and setup to get every detail right.",
+    priceId: servicePriceIds["Installation Oversight"],
+  },
+  {
+    name: "White-Glove Sourcing",
+    price: "$3,000",
+    description: "Premium vendor search and quality-checked sourcing for elevated pieces.",
+    priceId: servicePriceIds["White-Glove Sourcing"],
   },
 ]
 
 export default function PricingPage() {
+  const featuredService = services.find((service) => service.name === "Home Staging")
+  const secondaryServices = services.filter((service) => service.name !== "Home Staging")
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -111,6 +158,10 @@ export default function PricingPage() {
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Choose a plan that fits your design journey. Start with a 14-day free trial.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Concierge services are exclusively available to active members—subscribe, sign in, and book directly
+              from your dashboard.
             </p>
           </div>
         </div>
@@ -154,13 +205,20 @@ export default function PricingPage() {
                   </ul>
                 </div>
 
-                <Button
-                  className={`mt-8 w-full ${tier.popular ? "bg-primary hover:bg-primary/90" : ""}`}
-                  variant={tier.popular ? "default" : "outline"}
-                  asChild
-                >
-                  <Link href={tier.name === "Elite" ? "/contact" : "/signup"}>{tier.cta}</Link>
-                </Button>
+                {tier.priceId ? (
+                  <CheckoutButton
+                    className="mt-8 w-full"
+                    variant={tier.popular ? "default" : "outline"}
+                    priceId={tier.priceId}
+                    signupFallback={`/signup?plan=${tier.name.toLowerCase()}`}
+                  >
+                    {tier.cta}
+                  </CheckoutButton>
+                ) : (
+                  <Button asChild className="mt-8 w-full">
+                    <Link href="/contact">{tier.cta}</Link>
+                  </Button>
+                )}
               </Card>
             ))}
           </div>
@@ -171,34 +229,74 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Add-Ons */}
+      {/* Services */}
       <section className="py-16 md:py-24 bg-card">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">Add-on services</h2>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">Member-only services</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Need extra help? Book professional services as you need them.
+              Layer on concierge support once you subscribe. From staging to sourcing, our team can take care of the
+              heavy lifting.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {addOns.map((addon) => (
-              <Card key={addon.name} className="p-6 border-border bg-background">
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-serif text-xl font-bold text-foreground">{addon.name}</h3>
-                    <span className="text-lg font-semibold text-primary whitespace-nowrap">{addon.price}</span>
+          <div className="max-w-5xl mx-auto space-y-8">
+            {featuredService && (
+              <Card className="relative mx-auto max-w-3xl p-8 md:p-10 border-primary/40 bg-primary/5 shadow-xl space-y-6 text-left rounded-2xl">
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary text-primary-foreground px-5 py-1 text-sm font-semibold shadow">
+                  Concierge Favorite
+                </span>
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                  <div className="space-y-3">
+                    <h3 className="font-serif text-3xl font-bold text-foreground">{featuredService.name}</h3>
+                    <p className="text-base text-muted-foreground leading-relaxed">{featuredService.description}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{addon.description}</p>
+                  <div className="text-right md:text-left">
+                    <span className="text-2xl font-semibold text-primary block">{featuredService.price}</span>
+                    <p className="text-xs text-muted-foreground mt-1">Full-service staging with concierge support.</p>
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2">
+                  <p className="text-xs text-muted-foreground max-w-sm">
+                    Available to active members. Our team coordinates inventory, logistics, and on-site styling end-to-end.
+                  </p>
+                  <CheckoutButton
+                    priceId={featuredService.priceId}
+                    mode="payment"
+                    size="lg"
+                    className="w-full md:w-auto"
+                    loginFallback="/login?redirect_to=/dashboard/marketplace"
+                  >
+                    Book Home Staging
+                  </CheckoutButton>
                 </div>
               </Card>
-            ))}
-          </div>
+            )}
 
-          <div className="text-center mt-12">
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/services">View All Services</Link>
-            </Button>
+            <div className="grid gap-6 md:grid-cols-2">
+              {secondaryServices.map((service) => (
+                <Card key={service.name} className="p-6 border-border bg-background space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-serif text-xl font-bold text-foreground">{service.name}</h3>
+                      <span className="text-lg font-semibold text-primary whitespace-nowrap">{service.price}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
+                  </div>
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">Members book from the dashboard marketplace.</p>
+                    <CheckoutButton
+                      priceId={service.priceId}
+                      mode="payment"
+                      size="sm"
+                      loginFallback="/login?redirect_to=/dashboard/marketplace"
+                    >
+                      Book Service
+                    </CheckoutButton>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>

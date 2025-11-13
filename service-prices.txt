@@ -1,0 +1,9 @@
+| Service                    | Price           | Notes                                                          |
+| -------------------------- | --------------- | -------------------------------------------------------------- |
+| **Single Room Design**     | **$650**        | Full room design with layout, concept board, and shopping list |
+| **Home Staging**           | **$6,000**      | Full-home staging for listings (up to ~2,000 sq ft)            |
+| **Event Setup**            | **$2,400**      | Includes décor, layout, and on-site styling                    |
+| **Color Consultation**     | **$250**        | In-person or virtual palette planning                          |
+| **In-Home Consultation**   | **$200 / hour** | Credited toward project if booked                              |
+| **Installation Oversight** | **$1,500**      | Project management during delivery and setup                   |
+| **White-Glove Sourcing**   | **$3,000**      | Premium vendor search and quality-checked sourcing             |

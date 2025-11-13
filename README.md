@@ -40,6 +40,9 @@ The app runs at [http://localhost:3000](http://localhost:3000).
 - **Lint:** `npm run lint`
 - **Format (check):** `npm run format`
 - **Format (write):** `npm run format:fix`
+- **Playwright (install binaries once):** `npx playwright install`
+- **E2E (headless):** `npm run test:e2e`
+- **E2E (headed):** `npm run test:e2e:headed`
 
 Prettier is configured with a 100 character print width and no semicolons to match the design system guidance.
 
@@ -57,3 +60,9 @@ Prettier is configured with a 100 character print width and no semicolons to mat
 ## 6. Next Steps
 
 Refer to `SPRINT_PLAN.md` for the active product roadmap, sprint planning, and outstanding tasks.
+
+---
+
+### Testing Notes
+
+- The auth smoke tests currently validate route guards and form rendering. A skipped test is included for the full sign-in redirect flow; enable it once Supabase email/password login is wired up and the `SUPABASE_SERVICE_ROLE_KEY` environment variable is available for seeding test users.

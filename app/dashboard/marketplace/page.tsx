@@ -1,94 +1,38 @@
-import { Button } from "@/components/ui/button"
+import type { ComponentType } from "react"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Home, Palette, Calendar, Sparkles, Clock, Star } from "lucide-react"
 import Link from "next/link"
+import { getServices } from "@/lib/services"
+import type { Service } from "@/types/service"
 
-const services = [
-  {
-    id: 1,
-    name: "Single Room Design",
-    category: "design",
-    price: "$200 - $500",
-    duration: "1-2 weeks",
-    rating: 4.9,
-    reviews: 127,
-    description: "Complete design plan for one room including mood board, shopping list, and layout suggestions.",
-    features: ["Custom mood board", "Shopping list with links", "Floor plan layout", "Color palette guide"],
-    image: "/placeholder.svg?key=ikjxn",
-  },
-  {
-    id: 2,
-    name: "Home Staging",
-    category: "staging",
-    price: "$1,000 - $3,500",
-    duration: "3-5 days",
-    rating: 5.0,
-    reviews: 89,
-    description: "Professional staging for real estate listings to help your home sell faster and for more money.",
-    features: ["Furniture rental", "Professional styling", "Photography coordination", "Quick turnaround"],
-    image: "/placeholder.svg?key=kfx2e",
-  },
-  {
-    id: 3,
-    name: "Event Styling",
-    category: "events",
-    price: "$500 - $2,000",
-    duration: "1-2 days",
-    rating: 4.8,
-    reviews: 64,
-    description: "Transform your space for parties, celebrations, and special events with professional styling.",
-    features: ["Theme consultation", "Decor setup", "On-site coordination", "Breakdown service"],
-    image: "/placeholder.svg?key=2sfxu",
-  },
-  {
-    id: 4,
-    name: "Color Consultation",
-    category: "consultation",
-    price: "$50 - $150",
-    duration: "1 hour",
-    rating: 4.9,
-    reviews: 201,
-    description: "Expert guidance on choosing the perfect color palette for your entire home.",
-    features: ["Video consultation", "Custom palette", "Paint recommendations", "Follow-up support"],
-    image: "/placeholder.svg?key=u99q1",
-  },
-  {
-    id: 5,
-    name: "Full Home Makeover",
-    category: "design",
-    price: "$2,500 - $8,000",
-    duration: "4-8 weeks",
-    rating: 5.0,
-    reviews: 42,
-    description: "Comprehensive design service for multiple rooms with ongoing support and implementation.",
-    features: ["Multi-room plans", "Shopping service", "Installation coordination", "Dedicated designer"],
-    image: "/placeholder.svg?key=fxgma",
-  },
-  {
-    id: 6,
-    name: "Virtual Design Session",
-    category: "consultation",
-    price: "$75 - $200",
-    duration: "45-60 min",
-    rating: 4.7,
-    reviews: 156,
-    description: "One-on-one video consultation with a professional designer to tackle your design challenges.",
-    features: ["Live video call", "Screen sharing", "Personalized advice", "Action plan"],
-    image: "/placeholder.svg?key=1p0jj",
-  },
-]
+const categoryMeta: Record<string, { label: string; icon: ComponentType<{ className?: string }> }> = {
+  design: { label: "Design", icon: Palette },
+  staging: { label: "Staging", icon: Home },
+  events: { label: "Events", icon: Calendar },
+  consultation: { label: "Consultation", icon: Sparkles },
+  implementation: { label: "Implementation", icon: Sparkles },
+}
 
-const categories = [
-  { value: "all", label: "All Services", icon: Sparkles },
-  { value: "design", label: "Design", icon: Palette },
-  { value: "staging", label: "Staging", icon: Home },
-  { value: "events", label: "Events", icon: Calendar },
-  { value: "consultation", label: "Consultation", icon: Sparkles },
-]
+function getCategories(services: Service[]) {
+  const unique = new Map<string, { label: string; icon: ComponentType<{ className?: string }> }>()
+  for (const service of services) {
+    if (!service.category) continue
+    const meta = categoryMeta[service.category] ?? {
+      label: service.category.replace(/^\w/, (c) => c.toUpperCase()),
+      icon: Sparkles,
+    }
+    unique.set(service.category, meta)
+  }
+  return [{ value: "all", label: "All Services", icon: Sparkles }, ...Array.from(unique.entries()).map(([value, meta]) => ({ value, label: meta.label, icon: meta.icon })) ]
+}
 
-export default function MarketplacePage() {
+export default async function MarketplacePage() {
+  const services = await getServices()
+  const categories = getCategories(services)
+
   return (
     <div className="p-6 md:p-8 space-y-8">
       <div className="space-y-2">
@@ -118,12 +62,12 @@ export default function MarketplacePage() {
                   <Card key={service.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="aspect-[16/10] bg-muted relative">
                       <img
-                        src={service.image || "/placeholder.svg"}
+                        src={service.hero_image || "/placeholder.svg"}
                         alt={service.name}
                         className="object-cover w-full h-full"
                       />
                       <Badge className="absolute top-4 right-4 bg-background/90 text-foreground border-border">
-                        {service.price}
+                        {service.price_display}
                       </Badge>
                     </div>
 
@@ -136,20 +80,20 @@ export default function MarketplacePage() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Star className="h-4 w-4 fill-primary text-primary" />
-                          <span className="font-medium text-foreground">{service.rating}</span>
-                          <span>({service.reviews})</span>
+                          <span className="font-medium text-foreground">{service.rating?.toFixed(1) ?? "5.0"}</span>
+                          <span>({service.reviews_count ?? 0})</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
-                          <span>{service.duration}</span>
+                          <span>{formatDuration(service.duration_minutes)}</span>
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <p className="text-xs font-medium text-muted-foreground">What's included:</p>
                         <ul className="grid grid-cols-2 gap-2">
-                          {service.features.map((feature, i) => (
-                            <li key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                          {(service.features ?? []).map((feature, index) => (
+                            <li key={`${service.id}-${index}`} className="flex items-start gap-1.5 text-xs text-muted-foreground">
                               <span className="text-primary mt-0.5">✓</span>
                               <span>{feature}</span>
                             </li>
@@ -157,9 +101,12 @@ export default function MarketplacePage() {
                         </ul>
                       </div>
 
-                      <Button className="w-full" asChild>
-                        <Link href={`/dashboard/marketplace/${service.id}`}>Book Service</Link>
-                      </Button>
+                      <Link
+                        href={`/dashboard/marketplace/${service.slug}`}
+                        className="inline-flex w-full items-center justify-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium transition hover:bg-primary/90"
+                      >
+                        Book Service
+                      </Link>
                     </div>
                   </Card>
                 ))}
@@ -183,4 +130,14 @@ export default function MarketplacePage() {
       </Card>
     </div>
   )
+}
+
+function formatDuration(durationMinutes: number | null) {
+  if (!durationMinutes || durationMinutes <= 0) return "Varies"
+  if (durationMinutes < 60) return `${durationMinutes} min`
+  const hours = durationMinutes / 60
+  if (Number.isInteger(hours)) {
+    return `${hours} hour${hours > 1 ? "s" : ""}`
+  }
+  return `${hours.toFixed(1)} hours`
 }

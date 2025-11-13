@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { createSupabaseBrowserClient } from "@/lib/supabase/client"
+import { Chrome, Loader2 } from "lucide-react"
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -19,6 +21,9 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [oauthLoading, setOauthLoading] = useState<"google" | null>(null)
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
 
   const {
     register,
@@ -36,14 +41,53 @@ export default function LoginPage() {
 
   const onSubmit = async (values: LoginFormValues) => {
     setStatus("idle")
+    setErrorMessage(null)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    })
 
-    await new Promise((resolve) => setTimeout(resolve, 800))
-
-    if (values.email && values.password) {
-      setStatus("success")
-      reset({ ...values, password: "" })
-    } else {
+    if (error) {
+      setErrorMessage(error.message)
       setStatus("error")
+      return
+    }
+
+    reset({ ...values, password: "" })
+    setStatus("success")
+    const redirectTo = new URLSearchParams(window.location.search).get("redirect_to") ?? "/dashboard"
+    window.location.replace(redirectTo)
+  }
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setStatus("idle")
+      setErrorMessage(null)
+      setOauthLoading("google")
+      const redirectPath = new URLSearchParams(window.location.search).get("redirect_to") ?? "/dashboard"
+      const origin = window.location.origin
+      const redirectUrl = redirectPath.startsWith("http") ? redirectPath : `${origin}${redirectPath}`
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+        },
+      })
+      if (error) {
+        setErrorMessage(error.message)
+        setStatus("error")
+        setOauthLoading(null)
+        return
+      }
+      if (data?.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to sign in with that provider.")
+      setStatus("error")
+    } finally {
+      // If Supabase redirects the user this will not run, but it ensures the button resets when it does not.
+      setOauthLoading(null)
     }
   }
 
@@ -96,17 +140,39 @@ export default function LoginPage() {
 
         {status === "success" && (
           <div className="rounded-md border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-primary">
-            Signed in! Replace this with Supabase auth once connected.
+            Signed in! Redirecting…
           </div>
         )}
         {status === "error" && (
           <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            Something went wrong. Please check your details and try again.
+            {errorMessage ?? "Something went wrong. Please check your details and try again."}
           </div>
         )}
       </form>
 
-      <p className="text-sm text-muted-foreground text-center md:text-left">
+      <div className="space-y-4">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full justify-center gap-2"
+          onClick={handleGoogleSignIn}
+          disabled={oauthLoading !== null}
+        >
+          {oauthLoading === "google" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Chrome className="h-4 w-4" />}
+          Google
+        </Button>
+      </div>
+
+      <p className="text-sm text-muted-foreground text-center">
         New to StyledByKelly?{" "}
         <Link href="/signup" className="font-medium text-primary hover:underline">
           Start your membership

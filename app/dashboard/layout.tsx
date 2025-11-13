@@ -1,15 +1,6 @@
-import type React from "react"
-import { DashboardNav } from "@/components/dashboard-nav"
+import type { ReactNode } from "react"
+import { DashboardShell } from "@/components/dashboard/shell"
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <div className="min-h-screen flex">
-      <DashboardNav />
-      <main className="flex-1 overflow-auto">{children}</main>
-    </div>
-  )
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return <DashboardShell>{children}</DashboardShell>
 }

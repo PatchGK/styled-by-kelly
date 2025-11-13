@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "StyledByKelly" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - heading "A cozy design companion for homes that tell your story" [level=2] [ref=e6]
+        - paragraph [ref=e7]: Join a membership that pairs AI personalization with real designers, local services, and the warm lifestyle aesthetic you love.
+      - generic [ref=e8]:
+        - paragraph [ref=e9]: Need help signing in?
+        - link "hello@styledbykelly.com" [ref=e10] [cursor=pointer]:
+          - /url: mailto:hello@styledbykelly.com
+    - main [ref=e11]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - heading "Welcome back" [level=1] [ref=e15]
+          - paragraph [ref=e16]: Sign in to access your personalized design dashboard and AI tools.
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - generic [ref=e19]:
+              - generic [ref=e20]: Email
+              - textbox "Email" [ref=e21]:
+                - /placeholder: you@example.com
+            - generic [ref=e22]:
+              - generic [ref=e23]:
+                - generic [ref=e24]: Password
+                - link "Forgot password?" [ref=e25] [cursor=pointer]:
+                  - /url: /forgot-password
+              - textbox "Password" [ref=e26]:
+                - /placeholder: ••••••••
+          - button "Sign In" [ref=e27]
+        - paragraph [ref=e28]:
+          - text: New to StyledByKelly?
+          - link "Start your membership" [ref=e29] [cursor=pointer]:
+            - /url: /signup
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e35] [cursor=pointer]:
+    - img [ref=e36]
+  - alert [ref=e39]
+```

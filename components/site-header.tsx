@@ -30,12 +30,6 @@ export function SiteHeader() {
             Pricing
           </Link>
           <Link
-            href="/services"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Services
-          </Link>
-          <Link
             href="/blog"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -85,12 +79,6 @@ export function SiteHeader() {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Pricing
-            </Link>
-            <Link
-              href="/services"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Services
             </Link>
           <Link
             href="/blog"
