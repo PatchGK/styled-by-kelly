@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Home, Palette, Calendar, Sparkles, Clock, Star } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { getServices } from "@/lib/services"
 import type { Service } from "@/types/service"
 
@@ -61,10 +62,13 @@ export default async function MarketplacePage() {
                 .map((service) => (
                   <Card key={service.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="aspect-[16/10] bg-muted relative">
-                      <img
+                      <Image
                         src={service.hero_image || "/placeholder.svg"}
                         alt={service.name}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority
                       />
                       <Badge className="absolute top-4 right-4 bg-background/90 text-foreground border-border">
                         {service.price_display}
@@ -90,7 +94,7 @@ export default async function MarketplacePage() {
                       </div>
 
                       <div className="space-y-2">
-                        <p className="text-xs font-medium text-muted-foreground">What's included:</p>
+                        <p className="text-xs font-medium text-muted-foreground">What&apos;s included:</p>
                         <ul className="grid grid-cols-2 gap-2">
                           {(service.features ?? []).map((feature, index) => (
                             <li key={`${service.id}-${index}`} className="flex items-start gap-1.5 text-xs text-muted-foreground">
@@ -120,7 +124,7 @@ export default async function MarketplacePage() {
         <div className="max-w-2xl space-y-4">
           <h2 className="font-serif text-2xl font-bold text-foreground">Need something custom?</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Can't find exactly what you're looking for? Our team can create a custom service package tailored to your
+            Can&apos;t find exactly what you&apos;re looking for? Our team can create a custom service package tailored to your
             specific needs.
           </p>
           <Button variant="outline" asChild>

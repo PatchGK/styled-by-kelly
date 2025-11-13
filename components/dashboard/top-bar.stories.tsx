@@ -20,14 +20,16 @@ export default meta
 
 type Story = StoryObj<typeof DashboardTopBar>
 
+const TopBarStoryContainer = () => {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="bg-background">
+      <DashboardTopBar mobileNavOpen={open} onMenuToggle={() => setOpen((prev) => !prev)} />
+    </div>
+  )
+}
+
 export const Default: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false)
-    return (
-      <div className="bg-background">
-        <DashboardTopBar mobileNavOpen={open} onMenuToggle={() => setOpen((prev) => !prev)} />
-      </div>
-    )
-  },
+  render: () => <TopBarStoryContainer />,
 }
 

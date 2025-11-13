@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,7 +10,7 @@ import { Upload, X, Sparkles } from "lucide-react"
 export function PhotoUpload() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [analyzing, setAnalyzing] = useState(false)
-  const [results, setResults] = useState<any>(null)
+  const [results, setResults] = useState<AnalysisResults | null>(null)
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -73,7 +73,16 @@ export function PhotoUpload() {
         ) : (
           <div className="space-y-6">
             <div className="relative">
-              <img src={uploadedImage || "/placeholder.svg"} alt="Uploaded room" className="w-full rounded-lg" />
+              <div className="relative w-full overflow-hidden rounded-lg aspect-[4/3]">
+                <Image
+                  src={uploadedImage || "/placeholder.svg"}
+                  alt="Uploaded room"
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  unoptimized
+                />
+              </div>
               <button
                 onClick={handleReset}
                 className="absolute top-4 right-4 h-8 w-8 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background"
@@ -112,7 +121,7 @@ export function PhotoUpload() {
 
           <div className="space-y-4">
             <div>
-              <h4 className="font-semibold text-foreground mb-3">What's Working Well</h4>
+              <h4 className="font-semibold text-foreground mb-3">What&apos;s Working Well</h4>
               <ul className="space-y-2">
                 {results.strengths.map((strength: string, i: number) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -146,4 +155,10 @@ export function PhotoUpload() {
       )}
     </div>
   )
+}
+
+type AnalysisResults = {
+  style: string
+  strengths: string[]
+  suggestions: string[]
 }

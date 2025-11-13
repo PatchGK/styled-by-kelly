@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -66,10 +67,13 @@ export default function ProjectsPage() {
         {projects.map((project) => (
           <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="aspect-[16/10] bg-muted relative group">
-              <img
+              <Image
                 src={project.image || "/placeholder.svg"}
                 alt={project.name}
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">

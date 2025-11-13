@@ -9,8 +9,6 @@ import { FLATTENED_NAV_ITEMS } from "@/components/dashboard-nav"
 import { useMemo, useState } from "react"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 
-type OAuthRedirect = "google" | "facebook"
-
 const QUICK_ACTIONS = [
   {
     label: "Start Project",

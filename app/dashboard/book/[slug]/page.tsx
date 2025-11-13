@@ -4,8 +4,13 @@ import { Card } from "@/components/ui/card"
 import { BookingForm } from "@/components/marketplace/booking-form"
 import { formatDuration } from "@/lib/time"
 
-export default async function BookServicePage({ params }: { params: { slug: string } }) {
-  const service = await getServiceBySlug(params.slug)
+type BookServicePageProps = {
+  params: Promise<{ slug: string }>
+}
+
+export default async function BookServicePage({ params }: BookServicePageProps) {
+  const { slug } = await params
+  const service = await getServiceBySlug(slug)
   if (!service) {
     notFound()
   }

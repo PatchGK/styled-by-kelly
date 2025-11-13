@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -63,7 +64,7 @@ export default function DashboardPage() {
       <div className="space-y-2">
         <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Welcome back, {displayName}</h1>
         <p className="text-muted-foreground">
-          {loading ? "Fetching your latest updates..." : "Here's what's happening with your design journey"}
+          {loading ? "Fetching your latest updates..." : "Here&apos;s what&apos;s happening with your design journey"}
         </p>
       </div>
 
@@ -155,8 +156,15 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {designBoards.map((board) => (
             <Card key={board.title} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-[4/3] bg-muted">
-                <img src={board.image} alt={board.title} className="object-cover w-full h-full" />
+              <div className="aspect-[4/3] bg-muted relative">
+                <Image
+                  src={board.image}
+                  alt={board.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  unoptimized
+                />
               </div>
               <div className="p-4 space-y-2">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-primary">
@@ -228,10 +236,13 @@ export default function DashboardPage() {
           ].map((project, i) => (
             <Card key={i} className="overflow-hidden">
               <div className="aspect-[4/3] bg-muted relative">
-                <img
+                <Image
                   src={`/.jpg?height=300&width=400&query=${encodeURIComponent(project.name)}`}
                   alt={project.name}
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  unoptimized
                 />
               </div>
               <div className="p-4 space-y-3">
@@ -255,7 +266,7 @@ export default function DashboardPage() {
       {/* Inspiration Feed */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-serif text-2xl font-bold text-foreground">This Month's Inspiration</h2>
+          <h2 className="font-serif text-2xl font-bold text-foreground">This Month&apos;s Inspiration</h2>
           <Button variant="ghost" asChild>
             <Link href="/inspiration">
               See More <ArrowRight className="ml-2 h-4 w-4" />
@@ -267,10 +278,13 @@ export default function DashboardPage() {
           {["Cozy Fall Vibes", "Minimalist Kitchen", "Boho Bedroom", "Modern Farmhouse"].map((theme, i) => (
             <Card key={i} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow">
               <div className="aspect-square bg-muted relative">
-                <img
+                <Image
                   src={`/.jpg?height=400&width=400&query=${encodeURIComponent(theme)}`}
                   alt={theme}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+                  unoptimized
                 />
               </div>
               <div className="p-3">
@@ -294,8 +308,15 @@ export default function DashboardPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {savedItems.map((item) => (
             <Card key={item.name} className="overflow-hidden border-border bg-background/80">
-              <div className="aspect-square bg-muted">
-                <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
+              <div className="aspect-square bg-muted relative">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+                  unoptimized
+                />
               </div>
               <div className="p-4 space-y-2">
                 <h3 className="font-medium text-foreground text-sm">{item.name}</h3>

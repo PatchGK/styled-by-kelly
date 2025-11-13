@@ -5,8 +5,12 @@ import { Clock, Star, MapPin, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { getServiceBySlug } from "@/lib/services"
 
-export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params
+type ServiceDetailPageProps = {
+  params: Promise<{ slug: string }>
+}
+
+export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+  const { slug } = await params
   const service = await getServiceBySlug(slug)
 
   if (!service) {

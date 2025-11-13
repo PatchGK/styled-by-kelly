@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
@@ -39,10 +40,13 @@ export default function HomePage() {
       <section className="py-12 md:py-16">
         <div className="container">
           <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-xl overflow-hidden">
-            <img
+            <Image
               src="/boho-living-room.jpg"
               alt="Modern living room styled with earthy tones"
-              className="object-cover w-full h-full"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
+              priority
             />
           </div>
         </div>
@@ -126,10 +130,13 @@ export default function HomePage() {
             </div>
           </div>
           <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-border">
-            <img
+            <Image
               src="/collaboration-vertical.jpg"
               alt="StyledByKelly designers collaborating on a client project"
-              className="object-cover w-full h-full"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              priority
             />
           </div>
         </div>

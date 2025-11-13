@@ -40,8 +40,13 @@ const mockPosts: Record<
   },
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = mockPosts[params.slug]
+type BlogPostPageProps = {
+  params: Promise<{ slug: string }>
+}
+
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = await params
+  const post = mockPosts[slug]
 
   if (!post) {
     notFound()

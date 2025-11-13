@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Card } from "@/components/ui/card"
@@ -72,11 +73,15 @@ export default function AboutPage() {
               </ul>
             </div>
 
-            <div className="rounded-xl overflow-hidden bg-muted aspect-[4/5]">
-              <img
+            <div className="rounded-xl overflow-hidden bg-muted aspect-[4/5] relative">
+              <Image
                 src="/placeholder.svg?key=kelly-team"
                 alt="The StyledByKelly team collaborating on mood boards"
-                className="object-cover w-full h-full"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+                unoptimized
               />
             </div>
           </div>

@@ -23,14 +23,14 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
       set(name: string, value: string, options: CookieOptions) {
         try {
           cookieStore.set({ name, value, ...options })
-        } catch (error) {
+        } catch {
           // noop - cookies can only be set during a Server Action or Route Handler
         }
       },
       remove(name: string, options: CookieOptions) {
         try {
           cookieStore.set({ name, value: "", ...options, maxAge: 0 })
-        } catch (error) {
+        } catch {
           // noop - cookies can only be set during a Server Action or Route Handler
         }
       },

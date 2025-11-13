@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Card } from "@/components/ui/card"
@@ -53,11 +54,15 @@ export default function BlogPage() {
           <div className="container grid md:grid-cols-3 gap-6">
             {posts.map((post) => (
               <Card key={post.slug} className="flex flex-col border-border bg-background overflow-hidden">
-                <div className="aspect-[4/3] bg-muted">
-                  <img
+                <div className="aspect-[4/3] bg-muted relative">
+                  <Image
                     src={`/placeholder.svg?key=${post.slug}`}
                     alt={post.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    priority
+                    unoptimized
                   />
                 </div>
                 <div className="flex-1 p-6 space-y-3">

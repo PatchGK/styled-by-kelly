@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -75,20 +76,41 @@ export function StyleQuiz() {
           <h2 className="font-serif text-3xl font-bold text-foreground">Your Design Style: Modern Farmhouse</h2>
           <p className="text-muted-foreground leading-relaxed">
             Based on your answers, you gravitate toward warm, inviting spaces that blend rustic charm with clean lines.
-            You appreciate natural materials, neutral palettes with earthy accents, and furniture that's both functional
+            You appreciate natural materials, neutral palettes with earthy accents, and furniture that&apos;s both functional
             and stylish.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="aspect-square rounded-lg bg-muted overflow-hidden">
-            <img src="/modern-farmhouse-living-room.jpg" alt="Style inspiration 1" className="object-cover w-full h-full" />
+          <div className="aspect-square rounded-lg bg-muted overflow-hidden relative">
+            <Image
+              src="/modern-farmhouse-living-room.jpg"
+              alt="Style inspiration 1"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              priority
+            />
           </div>
-          <div className="aspect-square rounded-lg bg-muted overflow-hidden">
-            <img src="/farmhouse-kitchen.png" alt="Style inspiration 2" className="object-cover w-full h-full" />
+          <div className="aspect-square rounded-lg bg-muted overflow-hidden relative">
+            <Image
+              src="/farmhouse-kitchen.png"
+              alt="Style inspiration 2"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              priority
+            />
           </div>
-          <div className="aspect-square rounded-lg bg-muted overflow-hidden">
-            <img src="/cozy-bedroom.png" alt="Style inspiration 3" className="object-cover w-full h-full" />
+          <div className="aspect-square rounded-lg bg-muted overflow-hidden relative">
+            <Image
+              src="/cozy-bedroom.png"
+              alt="Style inspiration 3"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              priority
+            />
           </div>
         </div>
 
