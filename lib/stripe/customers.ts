@@ -1,4 +1,4 @@
-import { stripe } from "@/lib/stripe"
+import { stripe, isStripeEnabled } from "@/lib/stripe"
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 export async function getOrCreateStripeCustomer(params: {
@@ -8,6 +8,11 @@ export async function getOrCreateStripeCustomer(params: {
   name?: string | null
 }) {
   const { supabase, userId, email, name } = params
+  const activeStripe = stripe
+
+  if (!isStripeEnabled || !activeStripe) {
+    throw new Error("Stripe is disabled in this environment.")
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -19,7 +24,7 @@ export async function getOrCreateStripeCustomer(params: {
     return profile.stripe_customer_id
   }
 
-  const customer = await stripe.customers.create({
+  const customer = await activeStripe.customers.create({
     email,
     name: profile?.full_name ?? name ?? undefined,
   })

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { stripe, isStripeEnabled } from "@/lib/stripe"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { getOrCreateStripeCustomer } from "@/lib/stripe/customers"
 
@@ -13,6 +13,14 @@ const activeStatuses = new Set(["active", "trialing"])
 
 export async function POST(request: Request) {
   try {
+    const activeStripe = stripe
+    if (!isStripeEnabled || !activeStripe) {
+      return NextResponse.json(
+        { error: "Stripe is disabled in this environment." },
+        { status: 503 },
+      )
+    }
+
     const supabase = await createSupabaseServerClient()
     const {
       data: { session },
@@ -50,7 +58,7 @@ export async function POST(request: Request) {
     const successUrl = `${appUrl}/dashboard?checkout=success`
     const cancelUrl = `${appUrl}/pricing?checkout=cancel`
 
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await activeStripe.checkout.sessions.create({
       mode,
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],

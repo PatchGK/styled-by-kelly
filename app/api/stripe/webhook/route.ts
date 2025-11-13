@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type Stripe from "stripe"
-import { stripe } from "@/lib/stripe"
+import { stripe, isStripeEnabled } from "@/lib/stripe"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
@@ -14,6 +14,11 @@ const planEntries = [
 const priceToPlanMap = new Map(planEntries)
 
 export async function POST(request: Request) {
+  const activeStripe = stripe
+  if (!isStripeEnabled || !activeStripe) {
+    return NextResponse.json({ message: "Stripe webhook disabled in this environment." }, { status: 200 })
+  }
+
   if (!webhookSecret) {
     return NextResponse.json({ error: "Stripe webhook secret not configured" }, { status: 500 })
   }
@@ -27,7 +32,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(payload, signature, webhookSecret)
+    event = activeStripe.webhooks.constructEvent(payload, signature, webhookSecret)
   } catch (error) {
     console.error("[stripe] webhook signature verification failed", error)
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
